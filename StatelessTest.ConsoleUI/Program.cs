@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace StatelessTest.ConsoleUI
@@ -61,6 +62,9 @@ namespace StatelessTest.ConsoleUI
         static void StartCallTimer()
         {
             Console.WriteLine("[Timer:] Call started at {0}", DateTime.Now);
+            var rnd = new Random();
+            var call = rnd.Next(5000);
+            Thread.Sleep(call);
         }
 
         static void StopCallTimer()
@@ -70,7 +74,7 @@ namespace StatelessTest.ConsoleUI
 
         static void Print(StateMachine<State, Trigger> phoneCall)
         {
-            Console.WriteLine("[Status:] {0}", phoneCall);
+            //Console.WriteLine("[Status:] {0}", phoneCall);
         }
 
         static void Fire(StateMachine<State, Trigger> phoneCall, Trigger trigger)
