@@ -11,6 +11,7 @@ namespace StatelessTest.ConsoleUI
     {
         static void Main(string[] args)
         {
+            PhoneTest();
         }
 
         static void PhoneTest()
