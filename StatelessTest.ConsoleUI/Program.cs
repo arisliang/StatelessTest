@@ -9,7 +9,7 @@ using Ninject;
 
 namespace StatelessTest.ConsoleUI
 {
-    class Program
+    public class Program
     {
         #region properties
         static OffHook _OffHook
@@ -61,7 +61,7 @@ namespace StatelessTest.ConsoleUI
             PhoneClassTest();
         }
 
-        static void PhoneEnumTest()
+        void PhoneEnumTest()
         {
             var phoneCall = new StateMachine<State, Trigger>(State.OffHook);
 
@@ -111,20 +111,26 @@ namespace StatelessTest.ConsoleUI
 
             phoneCall
                 .Configure(_OffHook)
+                .OnEntry(() => _OffHook.OnEntry(phoneCall))
+                .OnExit(() => _OffHook.OnExit(phoneCall))
                 .Permit(Trigger.CallDialed, _Ringing);
             phoneCall
                 .Configure(_Ringing)
+                .OnEntry(() => _Ringing.OnEntry(phoneCall))
+                .OnExit(() => _Ringing.OnExit(phoneCall))
                 .Permit(Trigger.HungUp, _OffHook)
                 .Permit(Trigger.CallConnected, _Connected);
             phoneCall
                 .Configure(_Connected)
-                .OnEntry(t => StartCallTimer())
-                .OnExit(t => StopCallTimer())
+                .OnEntry(() => _Connected.OnEntry(phoneCall))
+                .OnExit(() => _Connected.OnExit(phoneCall))
                 .Permit(Trigger.LeftMessage, _OffHook)
                 .Permit(Trigger.HungUp, _OffHook)
                 .Permit(Trigger.PlacedOnHold, _OnHold);
             phoneCall.Configure(_OnHold)
                 .SubstateOf(_Connected)
+                .OnEntry(() => _OnHold.OnEntry(phoneCall))
+                .OnExit(() => _OnHold.OnExit(phoneCall))
                 .Permit(Trigger.TakenOffHold, _Connected)
                 .Permit(Trigger.HungUp, _OffHook)
                 .Permit(Trigger.PhoneHurledAgainstWall, _PhoneDestroyed);
@@ -185,7 +191,7 @@ namespace StatelessTest.ConsoleUI
         }
     }
 
-    enum Trigger
+    public enum Trigger
     {
         CallDialed,
         HungUp,
@@ -196,7 +202,7 @@ namespace StatelessTest.ConsoleUI
         PhoneHurledAgainstWall
     }
 
-    enum State
+    public enum State
     {
         OffHook,
         Ringing,
